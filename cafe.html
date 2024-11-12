@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Orderline Details</title>
+    <style>
+        table { width: 100%; border-collapse: collapse; }
+        th, td { border: 1px solid black; padding: 8px; text-align: left; }
+        th { background-color: #f2f2f2; }
+    </style>
+</head>
+<body>
+
+<h2>Orderline Table</h2>
+
+<table>
+    <tr>
+        <th>Order No</th>
+        <th>Order Date</th>
+        <th>Customer Name</th>
+        <th>Item Name</th>
+        <th>Unit Cost</th>
+        <th>Quantity Ordered</th>
+        <th>Total Amount</th>
+    </tr>
+
+    <?php
+    // Database connection
+    $conn = new mysqli("localhost", "root", "23809362Ter3.", "cafe");
+
+    // Check connection
+    if ($conn->connect_error) {
+        die("Connection failed: " . $conn->connect_error);
+    }
+
+    // Query to get data from the ORDERLINE table and related tables
+    $sql = "SELECT ORDERLINE.OrderNo, SALESORDER.OrderDate, SALESORDER.CustomerName, 
+                   ITEM.ItemName, ITEM.UnitCost, ORDERLINE.QuantityOrdered, ORDERLINE.TotalAmount
+            FROM ORDERLINE
+            JOIN SALESORDER ON ORDERLINE.OrderNo = SALESORDER.OrderNo
+            JOIN ITEM ON ORDERLINE.ItemNo = ITEM.ItemNo";
+    $result = $conn->query($sql);
+
+    // Fetch data and display in table rows
+    if ($result->num_rows > 0) {
+        while ($row = $result->fetch_assoc()) {
+            echo "<tr>
+                    <td>{$row['OrderNo']}</td>
+                    <td>{$row['OrderDate']}</td>
+                    <td>{$row['CustomerName']}</td>
+                    <td>{$row['ItemName']}</td>
+                    <td>{$row['UnitCost']}</td>
+                    <td>{$row['QuantityOrdered']}</td>
+                    <td>{$row['TotalAmount']}</td>
+                  </tr>";
+        }
+    } else {
+        echo "<tr><td colspan='7'>No records found</td></tr>";
+    }
+
+    // Close the database connection
+    $conn->close();
+    ?>
+
+</table>
+
+</body>
+</html>
